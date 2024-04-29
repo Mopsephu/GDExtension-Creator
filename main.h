@@ -8,6 +8,8 @@
 #include <pthread.h>
 #include <time.h>
 
+#define max(a, b) (a > b ? a : b)
+
 #define endl printf("\n")
 
 void floor_to(unsigned const short rounder, float* number);

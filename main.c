@@ -42,11 +42,11 @@ int main(void)
     
     //Спрашиваем пользователя о наличии предустановленных компонентов. Если их нет, закрыть программу
     printf("If you have them all installed, press 'y', otherwise the program will be closed: ");
-    char desicion = getchar();
+    char decision = getchar();
     endl;
-    if (desicion != 'y')
+    if (decision != 'y')
     {
-        //printf("The decision is %c", desicion);
+        //printf("The decision is %c", decision);
         printf("Program finished!\n");
         system("pause");
         return 0;
@@ -78,6 +78,12 @@ int main(void)
     }
     //Поскольку есть приколисты, округляем число до десятых
     floor_to(10, &version_choice);
+    printf("Your project will have version of %.1f\nAre you sure? (y - yes, otherwise - no)\n", version_choice);
+    decision = getchar();
+    fgets(buffer, sizeof(buffer), stdin);
+    endl;
+    if (decision != 'y')
+        goto choosing_version;
     //printf("The version was corrected to %.1f\n", version_choice);
 
     //Просим пользователя указать имя папки, которая создастся под проект
@@ -94,17 +100,23 @@ int main(void)
     endl;
     if (has_forbidden_symbols(folder_name))
     {
-        printf("You stated forbidden symbol(s)!\n");
+        printf("You stated forbidden symbols!\n");
         goto giving_folder_name;
     }
+    printf("You stated '%s'. Are you sure you want to continue with it? (y - yes, otherwise - no)\n", folder_name);
+    decision = getchar();
+    fgets(buffer, sizeof(buffer), stdin);
+    endl;
+    if (decision != 'y')
+        goto giving_folder_name;
 
     //Спрашиваем про директорию: использовать текущею, или поменять на другую
     printf("'%s' will be created in current directory. Is this okay? y - yes (The program will use current directory), anything else - go to stating directory: ", folder_name);
-    desicion = getchar();
+    decision = getchar();
     fgets(buffer, sizeof(buffer), stdin);
     endl;
     char current_working_directory[1024];
-    if (desicion == 'y')
+    if (decision == 'y')
     {
         //Здесь оно и помещает в переменную путь, и проверяет доступность этого пути
         if (getcwd(current_working_directory, sizeof(current_working_directory)) == NULL)
@@ -128,11 +140,11 @@ int main(void)
             printf("The stated directory DOES NOT exist!\n");
             goto directory_state;
         }
-        fgets(buffer, sizeof(buffer), stdin);
-        printf("You stated '%s'\nAre you sure? (y - yes, otherwise - no): ", current_working_directory);
-        desicion = getchar();
+        //fgets(buffer, sizeof(buffer), stdin);
+        printf("You stated '%s'\nAre you sure you want to create your project there? (y - yes, otherwise - no): ", current_working_directory);
+        decision = getchar();
         endl;
-        if (desicion != 'y')
+        if (decision != 'y')
             goto directory_state;
         //Переходим по указанному пути
         chdir(current_working_directory);
@@ -142,13 +154,13 @@ int main(void)
     //Сразу переходим в созданную папку
     chdir(folder_name);
 
-    unsigned char cores_amount;
+    signed char cores_amount;
     getting_cores:
     //Просим указать количество ядер, которое будет использоваться для компиляции проекта
-    //fgets(buffer, sizeof(buffer), stdin);
-    printf("How many CPU cores will be used to compile the project?\nYou have %d available CPU cores (0 - use all cores except for 1).\n", pthread_num_processors_np());
+    printf("How many CPU cores will be used to compile the project?\nYou have %d available CPU cores\n(0 - use all cores except for 1. X<0 - use all cores except for 1-X (if result of the addition reaches maximum of the available CPU cores, it will use only 1 core)).\n", pthread_num_processors_np());
     scanf_result = scanf("%hhu%c", &cores_amount, &next_chr);
-    getchar();
+    fgets(buffer, sizeof(buffer), stdin);
+    //getchar();
     //fflush(stdin);
     endl;
     if (scanf_result == 0 || next_chr != '\n')
@@ -161,8 +173,15 @@ int main(void)
     //Если ввели слишком большое количество ядер, использоваться будут все
     else if (cores_amount > ((unsigned char)pthread_num_processors_np()))
         cores_amount = (unsigned char)pthread_num_processors_np();
-    printf("Compilator will use %d out of %d available cores\n", cores_amount, ((unsigned char)pthread_num_processors_np()));
-    
+    else if (cores_amount < 0)
+        cores_amount = max(1, ((unsigned char)pthread_num_processors_np())+cores_amount-1);
+    printf("Compilator will use %d out of %d available cores\nAre you sure? (y - yes, otherwise - no)\n", cores_amount, ((unsigned char)pthread_num_processors_np()));
+    decision = getchar();
+    fgets(buffer, sizeof(buffer), stdin);
+    endl;
+    if(decision != 'y')
+        goto getting_cores;
+
     printf("Creating your project. Wait until it's done...\n\n");
     sleep(3);
     start = clock();
