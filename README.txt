@@ -30,3 +30,21 @@ Instructions of using:
 5.1) Confirm or deny changes;
 6) Wait until the project will be fully done;
 7) Success! Your project is built!
+
+Explanation of the algorithm:
+After user finished initial settings, program will create a folder with the stated name in stated directory and will continue working there;
+Using "git clone...", the program will install repository of Godot Engine;
+Program will go into 'godot-cpp' subfolder and fetches submodules via Git command;
+Program will start compiling initial debug DLL, targeted on platform (Windows, Linux...) you're currently using;
+After compiling of debug DLL is done, the program will do the same thing for release DLL;
+After compilation is done, the program will climb up the directory, create 'src' subfolder and go into it;
+There the program will create register_types.h and register_types.cpp and fill them both with basic functionality;
+Next, the program will will climb up the directory again and create SConstruct.py file and fill it;
+Then the program will compile the project for both debug DLL and release DLL again;
+After that, the program will go into subfolder with the same name as the folder, then will go into bin folder and after that the program will create .gdextension file and fill it.
+After .gdextension file is filled up, the program work is done and it will alert the user, showing in addition to that time elapsed in both seconds and minutes.
+
+Post-work explanation:
+When the work of the program is done, all you will need to do is to add new nodes in 'src' subfolder and register them properly inside of register_types.cpp.
+As you will make practically not many changes in the whole project, the further compilation will be done in seconds, saving you lots of time.
+Good luck in programming in GDExtension!
