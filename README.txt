@@ -3,6 +3,13 @@ Source code is free to be modified and compiled on different platforms such as W
 
 The program's goal is to build minimum for your GDExtension project for Godot Engine.
 
+You also need to install the following software in order to make the work of the program correct:
+1) Python:
+1.1) Scons;
+2) Git;
+3) Godot Engine of version of 4.1 or above (you need it to create the project of the game engine inside of GDExtension project);
+4) Good internet connection ;)
+
 Structure of built GDExtension project:
 1) godot-cpp
 2) src:
